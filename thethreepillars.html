@@ -1,0 +1,324 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Three Pillars</title>
+<style>
+body{margin:0;overflow:hidden;font-family:Arial;background:#87ceeb;}
+canvas{display:block;width:100%;height:100%;}
+
+/* ---------- PAGE 1 ---------- */
+#page1{position:absolute; inset:0;}
+#continueBtn{
+  position:absolute; bottom:25px; left:50%; transform:translateX(-50%);
+  padding:12px 35px; font-size:18px; border-radius:30px;
+  border:none; background:#222; color:white; cursor:pointer; z-index:5;
+}
+
+/* ---------- PAGE 2 ---------- */
+#page2{
+  position:absolute; inset:0; display:none; justify-content:center; align-items:center;
+  overflow:hidden;
+}
+#bg2{
+  position:absolute; inset:0; width:100%; height:100%; z-index:0;
+}
+.container{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+  width:90%;
+  max-width:350px;
+}
+.star-button{
+  position:relative;
+  width:100%;
+  height:55px;
+  background:black;
+  border:none;
+  border-radius:35px;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  overflow:hidden;
+  text-align:center;
+}
+.star{
+  position:absolute;
+  width:2.5px;
+  height:2.5px;
+  background:white;
+  border-radius:50%;
+  animation:twinkle 2s infinite;
+}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+#backPage2{
+  position:absolute; top:20px; left:20px; padding:10px 20px; border:none; border-radius:20px; cursor:pointer; z-index:10;
+}
+
+/* ---------- PASSWORD MODAL ---------- */
+#passwordModal{
+  position:fixed; inset:0; display:none; justify-content:center; align-items:center;
+  background:rgba(0,0,0,.6); z-index:20;
+}
+.modal{
+  position:relative; background:black; color:white; padding:25px; border-radius:20px;
+  text-align:center; width:85%; max-width:300px;
+}
+.modal input{width:100%; padding:10px; border-radius:10px; border:none;}
+.modal button{margin:10px 5px; padding:10px 20px; border:none; border-radius:20px; cursor:pointer;}
+.close{position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;}
+
+/* ---------- PAGE 3 ---------- */
+#page3{
+  position:absolute; inset:0; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center;
+  background:#f5e6c5; transform-origin:top; transform:scaleY(0);
+  animation:foldOpen 1.2s forwards;
+  z-index:30;
+}
+@keyframes foldOpen{0%{transform:scaleY(0) rotate(0deg);}50%{transform:scaleY(1) rotate(1deg);}70%{transform:scaleY(1) rotate(-0.5deg);}100%{transform:scaleY(1) rotate(0deg);}}
+#page3 canvas{position:absolute; inset:0; width:100%; height:100%; z-index:-1;}
+#page3 p{font-size:24px; color:#4a0033; margin-top:20px; padding:0 15px;}
+#backFinal{position:absolute; top:20px; left:20px; padding:10px 20px; border:none; border-radius:20px; cursor:pointer;}
+
+/* ---------- GENERAL ---------- */
+button{font-family:inherit;}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1">
+  <canvas id="c"></canvas>
+  <button id="continueBtn">Continue</button>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2">
+  <canvas id="bg2"></canvas>
+  <button id="backPage2" onclick="backToPage1()">⬅ Back</button>
+  <div class="container">
+    <button class="star-button" onclick="ask('Himawari')">Himawari</button>
+    <button class="star-button" onclick="ask('Dhabbo')">Dhabbo</button>
+    <button class="star-button" onclick="ask('Bhutkun')">Bhutkun</button>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div id="passwordModal">
+  <div class="modal">
+    <div class="close" onclick="closePwd()">✖</div>
+    <h3 id="title"></h3>
+    <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:15px;">
+      <input type="password" id="pwd" placeholder="Password" style="flex:1;">
+      <button id="togglePwd" onclick="togglePassword()">Show</button>
+    </div>
+    <div style="margin-top:10px;">
+      <button onclick="check()">Submit</button>
+      <button onclick="closePwd()">Back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- CONFIG ---------- */
+const passwords={
+  Himawari:"IMKARISHMA",
+  Dhabbo:"APEKSHAIAM",
+  Bhutkun:"PREETYPREETI"
+};
+const pageTexts={
+  Himawari:"My dear Nellu didi,The world often calls you silent and shy, but it takes immense courage to go through everything without saying a word. The world has no idea how strong you truly are.As the year comes to an end, I feel so grateful to have you as my big sister. Having an elder sister is such a beautiful blessing. It feels like having a friend and a mother in one person. Thank you for always being there for me when I needed you, for guiding me when I made wrong choices in life, and for forgiving me every time.The year 2025 was one of the most crucial years of my life, especially career-wise. It would have been so much harder without you. Thank you for standing by me throughout it all.Your little brother will always stand right beside you, no matter what the world says.I wish you a very Happy New Year ❤️",
+  Dhabbo:"Dear Dhabbo, I often talk rudely to you, and I am truly sorry for that. I may say things in anger, but I never mean them. I am so grateful to have you in my life, and I feel blessed to have you as my sister. Thank you for forgiving me every time I made a mistake and spoke to you rudely. I might get angry when you tell me certain things, but deep down I truly understand what you mean. Sometimes someone needs to be strict with me, and with my whole heart I deeply acknowledge everything you say, because I know you care for me, and that is the only reason you say those things. You are the best didi in the world—so strong and capable of doing anything. Having an elder sister is nothing less than a blessing to me; it feels like having someone who listens like a friend and cares like a mother. The year 2025 has been very hard for me, and it feels impossible to imagine it without you. Thank you for being there, your little brother will always stand right beside you, no matter what the world says. I wish you a very Happy New Year, filled with happiness, peace, and everything you deserve.",
+  Bhutkun:"Dear Gudiya didi, thank you for being my best friend, for listening to me like a friend and correcting me like a mother. Thank you for guiding me when I was wrong and for always forgiving me. I feel truly blessed to have you as my elder sister. The year 2025 was very hard for me, but it felt so much easier with you by my side. I want you to know that your little brother will always stand beside you, supporting you in every decision of your life. Thank you for always being there. I wish you a very Happy New Year ❤️"
+};
+let selected="", finalPage=null;
+
+/* ---------- PAGE 1 CANVAS ---------- */
+const c=document.getElementById("c");
+const x=c.getContext("2d");
+function resize(){c.width=window.innerWidth;c.height=window.innerHeight; draw();}
+onresize=resize; resize();
+
+function pillar(px, base, h, col){
+  x.fillStyle=col;
+  x.fillRect(px-25, base-h, 50, h);
+  x.strokeStyle="#ccc";
+  for(let i=0;i<h;i+=35){
+    x.beginPath();
+    x.moveTo(px-25, base-i);
+    x.lineTo(px+25, base-i);
+    x.stroke();
+  }
+}
+
+function draw(){
+  const w=c.width,h=c.height;
+  x.clearRect(0,0,w,h);
+
+  // sky
+  x.fillStyle="#87ceeb"; x.fillRect(0,0,w,h);
+  // clouds
+  x.fillStyle="white";
+  x.beginPath();
+  x.arc(200,100,40,0,Math.PI*2);
+  x.arc(260,90,50,0,Math.PI*2);
+  x.arc(320,100,40,0,Math.PI*2);
+  x.fill();
+
+  // TITLE CENTERED
+  x.fillStyle="#222";
+  x.font="bold 36px Arial";
+  x.textAlign="center";
+  x.fillText("MY THREE PILLARS", w/2, 80);
+
+  // ground & floor
+  const gy=h*0.85;
+  const fy=h*0.65;
+  x.fillStyle="#6e8b3d"; x.fillRect(0,gy,w,h-gy);
+  x.fillStyle="#a47c48"; x.fillRect(w*0.15,fy,w*0.7,gy-fy);
+
+  // stairs
+  x.fillStyle="#8b6a3e";
+  for(let i=0;i<5;i++) x.fillRect(w*0.4, gy-(i+1)*20, w*0.2, 20);
+
+  // back pillar
+  pillar(w*0.5, fy, 130, "#e0e0d6");
+  // roof
+  x.fillStyle="#5a3b1f";
+  x.beginPath(); x.roundRect(w*0.2, fy-150, w*0.6, 40, 25); x.fill();
+  // front pillars
+  pillar(w*0.35, fy, 160, "#f2f2ea");
+  pillar(w*0.65, fy, 160, "#f2f2ea");
+
+  // child
+  const cx=w/2, cy=fy+60;
+  x.fillStyle="#f1c27d"; x.beginPath(); x.arc(cx,cy-40,14,0,Math.PI*2); x.fill();
+  x.fillStyle="#4a6fa5"; x.fillRect(cx-10,cy-25,20,30);
+}
+
+/* ---------- NAVIGATION ---------- */
+document.getElementById("continueBtn").onclick=()=>{page1.style.display="none"; page2.style.display="flex";}
+function backToPage1(){page2.style.display="none"; page1.style.display="block";}
+
+/* ---------- STARS ---------- */
+document.querySelectorAll(".star-button").forEach(b=>{
+  for(let i=0;i<30;i++){
+    const s=document.createElement("div");
+    s.className="star";
+    s.style.left=Math.random()*100+"%";
+    s.style.top=Math.random()*100+"%";
+    s.style.animationDelay=Math.random()*2+"s";
+    b.appendChild(s);
+  }
+});
+
+/* ---------- PASSWORD ---------- */
+function ask(name){
+  selected=name;
+  document.getElementById("title").innerText=`Password for ${name}`;
+  document.getElementById("pwd").value="";
+  document.getElementById("togglePwd").innerText="Show";
+  document.getElementById("pwd").type="password";
+  document.getElementById("passwordModal").style.display="flex";
+}
+function closePwd(){document.getElementById("passwordModal").style.display="none";}
+function check(){
+  const input=document.getElementById("pwd").value;
+  if(input===passwords[selected]){
+    document.getElementById("passwordModal").style.display="none";
+    page2.style.display="none";
+    openFinal(selected);
+  }else alert("Wrong password ❌");
+}
+function togglePassword(){
+  const input=document.getElementById("pwd");
+  const btn=document.getElementById("togglePwd");
+  if(input.type==="password"){input.type="text"; btn.innerText="Hide";}
+  else{input.type="password"; btn.innerText="Show";}
+}
+
+/* ---------- PAGE 2 RGB BLOBS BACKGROUND ---------- */
+const canvas2=document.getElementById("bg2");
+const ctx2=canvas2.getContext("2d");
+function resizeBg2(){canvas2.width=window.innerWidth; canvas2.height=window.innerHeight;}
+resizeBg2();
+window.addEventListener("resize",resizeBg2);
+
+const blobs=[];
+for(let i=0;i<25;i++){
+  blobs.push({
+    x:Math.random()*canvas2.width,
+    y:Math.random()*canvas2.height,
+    r:Math.random()*60+30,
+    dx:(Math.random()-0.5)*0.2,
+    dy:(Math.random()-0.5)*0.2,
+    color:{r:Math.random()*255, g:Math.random()*255, b:Math.random()*255},
+    dr:Math.random()*0.5-0.25,
+    dg:Math.random()*0.5-0.25,
+    db:Math.random()*0.5-0.25
+  });
+}
+
+function drawBg2(){
+  ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+  blobs.forEach(b=>{
+    b.x+=b.dx; b.y+=b.dy;
+    if(b.x<0) b.x=canvas2.width; if(b.x>canvas2.width) b.x=0;
+    if(b.y<0) b.y=canvas2.height; if(b.y>canvas2.height) b.y=0;
+    b.color.r+=b.dr; b.color.g+=b.dg; b.color.b+=b.db;
+    if(b.color.r>255||b.color.r<0){b.dr*=-1;}
+    if(b.color.g>255||b.color.g<0){b.dg*=-1;}
+    if(b.color.b>255||b.color.b<0){b.db*=-1;}
+    const gradient=ctx2.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+    gradient.addColorStop(0,`rgba(${Math.floor(b.color.r)},${Math.floor(b.color.g)},${Math.floor(b.color.b)},0.25)`);
+    gradient.addColorStop(1,`rgba(${Math.floor(b.color.r)},${Math.floor(b.color.g)},${Math.floor(b.color.b)},0)`);
+    ctx2.fillStyle=gradient;
+    ctx2.beginPath(); ctx2.arc(b.x,b.y,b.r,0,Math.PI*2); ctx2.fill();
+  });
+  requestAnimationFrame(drawBg2);
+}
+drawBg2();
+
+/* ---------- PAGE 3 CRUMPLED PAPER + SHAKE ---------- */
+function openFinal(name){
+  finalPage=document.createElement("div");
+  finalPage.id="page3";
+  finalPage.innerHTML=`<button id="backFinal" onclick="backToMenu()">⬅ Back</button><p>${pageTexts[name]}</p>`;
+  document.body.appendChild(finalPage);
+
+  const canvas=document.createElement("canvas");
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  finalPage.appendChild(canvas);
+  const ctx=canvas.getContext("2d");
+  ctx.fillStyle="#f5e6c5"; ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let i=0;i<1500;i++){
+    const xPos=Math.random()*canvas.width;
+    const yPos=Math.random()*canvas.height;
+    const rad=Math.random()*5+2;
+    const opacity=Math.random()*0.1+0.05;
+    ctx.fillStyle=`rgba(150,75,0,${opacity})`;
+    ctx.beginPath(); ctx.arc(xPos,yPos,rad,0,Math.PI*2); ctx.fill();
+  }
+  for(let i=0;i<200;i++){
+    ctx.strokeStyle=`rgba(100,50,0,0.05)`;
+    ctx.beginPath();
+    ctx.moveTo(Math.random()*canvas.width, Math.random()*canvas.height);
+    ctx.bezierCurveTo(Math.random()*canvas.width, Math.random()*canvas.height,
+                      Math.random()*canvas.width, Math.random()*canvas.height,
+                      Math.random()*canvas.width, Math.random()*canvas.height);
+    ctx.stroke();
+  }
+}
+
+function backToMenu(){
+  if(finalPage) finalPage.remove();
+  page2.style.display="flex";
+}
+</script>
+</body>
+</html>
